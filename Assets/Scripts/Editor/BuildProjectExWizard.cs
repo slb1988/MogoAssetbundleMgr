@@ -58,6 +58,38 @@ public class BuildProjectExWizard : EditorWindow
     /// </summary>
     void OnSelectionChange() { Repaint(); }
 
+    /// <summary>
+    /// Returns a blank usable 1x1 white texture.
+    /// </summary>
+
+    static public Texture2D blankTexture
+    {
+        get
+        {
+            return EditorGUIUtility.whiteTexture;
+        }
+    }
+
+    /// <summary>
+    /// Draw a visible separator in addition to adding some padding.
+    /// </summary>
+
+    static public void DrawSeparator()
+    {
+        GUILayout.Space(12f);
+
+        if (Event.current.type == EventType.Repaint)
+        {
+            Texture2D tex = blankTexture;
+            Rect rect = GUILayoutUtility.GetLastRect();
+            GUI.color = new Color(0f, 0f, 0f, 0.25f);
+            GUI.DrawTexture(new Rect(0f, rect.yMin + 6f, Screen.width, 4f), tex);
+            GUI.DrawTexture(new Rect(0f, rect.yMin + 6f, Screen.width, 1f), tex);
+            GUI.DrawTexture(new Rect(0f, rect.yMin + 9f, Screen.width, 1f), tex);
+            GUI.color = Color.white;
+        }
+    }
+
     void OnGUI()
     {
         EditorGUIUtility.LookLikeControls(80f);
@@ -81,7 +113,7 @@ public class BuildProjectExWizard : EditorWindow
             ExportScenesManager.DirectoryCopy(curVersionFolder, m_newVersionFolder, true);
         }
         
-        NGUIEditorTools.DrawSeparator();
+        DrawSeparator();
         GUILayout.BeginHorizontal();
         GUILayout.Label("选择打包资源：", GUILayout.Width(120f));
         bool tempAll = m_selectAll;
@@ -92,7 +124,7 @@ public class BuildProjectExWizard : EditorWindow
         {
             foreach (var item in m_buildResourcesInfoList)
             {
-                NGUIEditorTools.DrawSeparator();
+                DrawSeparator();
                 GUILayout.BeginHorizontal();
                 bool temp = item.check;
                 bool hasChanged = false;
@@ -125,8 +157,8 @@ public class BuildProjectExWizard : EditorWindow
                     var sw = new Stopwatch();
                     sw.Start();
                     var rootPath = Path.Combine(m_newVersionFolder, "version").Replace("\\", "/");
-                    //if (item.check)
-                    //    BuildAssetVersion(item, rootPath);
+                    if (item.check)
+                        BuildAssetVersion(item, rootPath);
                     sw.Stop();
                     LoggerHelper.Debug("BuildAssetVersion time: " + sw.ElapsedMilliseconds);
                 }
@@ -136,7 +168,7 @@ public class BuildProjectExWizard : EditorWindow
 
         }
 
-        NGUIEditorTools.DrawSeparator();
+        DrawSeparator();
         GUILayout.BeginHorizontal();
         GUILayout.Label("选择拷贝资源：", GUILayout.Width(120f));
         GUILayout.EndHorizontal();
@@ -155,7 +187,7 @@ public class BuildProjectExWizard : EditorWindow
         }
         GUILayout.EndHorizontal();
 
-        NGUIEditorTools.DrawSeparator();
+        DrawSeparator();
         GUILayout.EndScrollView();
 
         GUILayout.BeginHorizontal();
@@ -219,7 +251,7 @@ public class BuildProjectExWizard : EditorWindow
             var targetPath = ExportScenesManager.GetFolderPath(ExportScenesManager.SubMogoResources);
             var sourcePath = m_newVersionFolder + ExportFilesPath;
             ExportScenesManager.DirectoryCopy(sourcePath, targetPath, true);
-            LogDebug("copy success.");
+            LogDebug(string.Format("copy success. from: \n" + sourcePath + "\nto " + targetPath));
         }
 
         GUILayout.EndHorizontal();
@@ -301,6 +333,10 @@ public class BuildProjectExWizard : EditorWindow
         Directory.Delete(tempExport, true);
     }
 
+    private void BuildAssetVersion(BuildResourcesInfo item, string rootPath)
+    {
+        BundleExporter.BuildAssetVersion(GetAssetList(item).ToArray(), rootPath);
+    }
     /// <summary>
     /// 生成源资源版本
     /// </summary>

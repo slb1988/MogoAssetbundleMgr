@@ -811,14 +811,17 @@ public class ExportScenesManager
         }
         var result = new List<CopyResourcesInfo>();
 
-        foreach (SecurityElement item in xml.Children)
+        if (xml.Children != null)
         {
-            var info = new CopyResourcesInfo();
-            info.check = true;
-            info.targetPath = (item.Children[0] as SecurityElement).Text;
-            info.sourcePath = (item.Children[1] as SecurityElement).Text;
-            info.extention = (item.Children[2] as SecurityElement).Text;
-            result.Add(info);
+            foreach (SecurityElement item in xml.Children)
+            {
+                var info = new CopyResourcesInfo();
+                info.check = true;
+                info.targetPath = (item.Children[0] as SecurityElement).Text;
+                info.sourcePath = (item.Children[1] as SecurityElement).Text;
+                info.extention = (item.Children[2] as SecurityElement).Text;
+                result.Add(info);
+            }
         }
 
         return result;

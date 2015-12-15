@@ -432,7 +432,7 @@ namespace Mogo.Util
 
         public static String LoadFile(String fileName)
         {
-            //LoggerHelper.Debug(fileName);
+            LoggerHelper.Debug(fileName);
             if (File.Exists(fileName))
                 using (StreamReader sr = File.OpenText(fileName))
                     return sr.ReadToEnd();
@@ -1012,6 +1012,14 @@ namespace Mogo.Util
 
         #region 文件路径处理
 
+        public static string GetFileExtention(string fileName)
+        {
+            int lastDotIndex = fileName.LastIndexOf('.');
+            if (lastDotIndex < 0)
+                return "";
+            else 
+                return fileName.Substring(lastDotIndex, fileName.Length - lastDotIndex);
+        }
         public static string GetFileNameWithoutExtention(string fileName, char separator = '/')
         {
             var name = GetFileName(fileName, separator);

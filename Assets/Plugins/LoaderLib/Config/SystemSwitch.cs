@@ -6,7 +6,7 @@ public class SystemSwitch
 {
     private static Boolean m_releaseMode = true;
     private static Boolean m_destroyResource = false;
-    private static Boolean m_useFileSystem = true;
+    private static Boolean m_useFileSystem = false;
     private static Boolean m_useHmf = true;
     private static Boolean m_destroyAllUI = false;
     private static Boolean m_usePlatformSDK = true;

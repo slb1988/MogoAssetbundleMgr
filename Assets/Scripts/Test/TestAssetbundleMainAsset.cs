@@ -426,8 +426,7 @@ public class TestAssetbundleMainAsset : MonoBehaviour
             info.name = (item.Children[0] as SecurityElement).Text;
             info.type = (item.Children[1] as SecurityElement).Text;
             info.copyOrder = (item.Children[2] as SecurityElement).Text;
-			Debug.Log((item.Children[3] as SecurityElement).Text);
-            info.isPopInBuild = int.Parse((item.Children[3] as SecurityElement).Text) == 1;
+            info.isPopInBuild = bool.Parse((item.Children[3] as SecurityElement).Text);
             info.extentions = (item.Children[4] as SecurityElement).Text.Split(' ');
             var folders = item.Children[5] as SecurityElement;
             info.folders = new List<BuildResourcesSubInfo>();
