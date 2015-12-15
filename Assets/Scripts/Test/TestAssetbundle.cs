@@ -173,6 +173,7 @@ public class TestAssetbundle : MonoBehaviour
                 var root = new DirectoryInfo(Application.dataPath);
                 //" + build.name + "\\
                 var path = Path.Combine(root.Parent.FullName, "Export\\0.0.0.1\\MogoResources");
+                //var path = Path.Combine(root.Parent.FullName, "Export\\0.0.0.1\\ExportedFiles\\" + build.folders[0].path);
                 var dirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
                 foreach (var item in dirs)
                 {
