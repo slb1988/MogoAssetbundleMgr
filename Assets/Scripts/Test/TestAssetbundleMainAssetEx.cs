@@ -67,7 +67,7 @@ public class TestAssetbundleMainAssetEx : MonoBehaviour
             loadAsset.LoadInstance(fileName,
                 (a, b, c) =>
                 {
-                    //loadAsset.Release(fileName, false);
+                    loadAsset.Release(fileName, false);
                     tempModel = c as GameObject;
                     //sw.Stop();
                     //LoggerHelper.Debug(sw.ElapsedMilliseconds);
