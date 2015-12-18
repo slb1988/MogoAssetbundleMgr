@@ -99,24 +99,76 @@ public class ExportScenesManager
     private const string UpdatePackage = ExportPath + "/" + SubUpdatePackage;
 
 
-	[MenuItem("Mogo/Build Item")]
-	public static void BuildItem()
-	{
-		var root = Application.dataPath + "/Resources/Characters/Item";
-		var af = Directory.GetFiles (root, "*.prefab", SearchOption.AllDirectories);
+	//[MenuItem("Mogo/Build Item")]
+    //public static void BuildItem()
+    //{
+    //    var root = Application.dataPath + "/Resources/Characters/Item";
+    //    var af = Directory.GetFiles (root, "*.prefab", SearchOption.AllDirectories);
 
-		BuildResourceManullyEx (new VersionCodeInfo("0.0.0.2"), "prefab", af.ToList(), ".prefab");
+    //    BuildResourceManullyEx (new VersionCodeInfo("0.0.0.2"), "prefab", af.ToList(), ".prefab");
 
-	}
+    //}
 
-	[MenuItem("Mogo/Test")]
-	public static void Test()
-	{
-		Debug.Log (GetFolderPath (ExportPath));	
+	//[MenuItem("Mogo/Test")]
+    //public static void Test()
+    //{
+    //    Debug.Log (GetFolderPath (ExportPath));	
+    //}
 
-	}
 
-	
+    #region 输出日志
+
+    [MenuItem("DebugMsg/OpenEditorLog")]
+    private static void OpenEditorLogFile()
+    {
+        string editorLogFilePath = "";
+#if UNITY_EDITOR
+        editorLogFilePath = "c:\\Users\\" + Environment.UserName + "\\AppData\\Local\\Unity\\Editor\\Editor.log";
+#elif UNITY_MAC
+        editorLogFilePath = "~/Library/Logs/Unity/Editor.log";
+#endif
+
+        OpenTextFileWithNotePad(editorLogFilePath);
+    }
+
+    [MenuItem("DebugMsg/OpenEditorPreLog")]
+    private static void OpenEditorPreLogFile()
+    {
+        string editorLogFilePath = "";
+#if UNITY_EDITOR
+        editorLogFilePath = "c:\\Users\\" + Environment.UserName + "\\AppData\\Local\\Unity\\Editor\\Editor-Prev.log";
+#elif UNITY_MAC
+        editorLogFilePath = "~/Library/Logs/Unity/Editor.log";
+#endif
+
+        OpenTextFileWithNotePad(editorLogFilePath);
+    }
+
+    [MenuItem("DebugMsg/Open Log File")]
+    private static void OpenLogFile()
+    {
+        var logPath = Application.persistentDataPath + "/log";
+        var fileName = new DirectoryInfo(logPath).GetFiles().OrderBy(t => t.LastWriteTime).Last().FullName;
+
+        OpenTextFileWithNotePad(fileName);
+    }
+    [MenuItem("DebugMsg/Open Log Folder")]
+    private static void OpenLogFolder()
+    {
+        var logPath = Application.persistentDataPath + "/log";
+        System.Diagnostics.Process.Start("explorer.exe", logPath.Replace('/', '\\'));
+    }
+
+    private static void OpenTextFileWithNotePad(string fileName)
+    {
+        LogDebug("OpenLogFile " + fileName);
+        var notepadExeProcPath = FileTools.GetNotePadPath();
+
+        System.Diagnostics.Process.Start(notepadExeProcPath, fileName);
+    }
+
+    #endregion
+
 	#region 切换输出平台
 
 	[MenuItem("BuildTarget/Android")]
@@ -174,6 +226,13 @@ public class ExportScenesManager
 		Debug.LogError (str);
 	}
 
+    /// <summary>
+    /// useless
+    /// </summary>
+    /// <param name="currentVersion"></param>
+    /// <param name="resFolder"></param>
+    /// <param name="targets"></param>
+    /// <param name="extentions"></param>
 	private static void BuildResourceManullyEx(VersionCodeInfo currentVersion, string resFolder, List<string> targets, params string[] extentions)
 	{
 		ExportScenesManager.LoadVersion ();
@@ -718,6 +777,8 @@ public class ExportScenesManager
             }
         }
     }
+
+
 
     public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs, bool overwrite = false)
     {

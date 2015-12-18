@@ -7,8 +7,12 @@ using UnityEngine;
 
 using Mogo.Util;
 
-using Object = UnityEngine.Object;
 using System.IO;
+
+using System.Diagnostics;
+
+using Object = UnityEngine.Object;
+using Debug = UnityEngine.Debug;
 
 public class ShowDependencies : EditorWindow
 {
@@ -71,9 +75,12 @@ public class ShowDependencies : EditorWindow
     public static void ChangeBuildinShader()
     {
         var files = Directory.GetFiles(Application.dataPath + "/Resources/", "*.prefab", SearchOption.AllDirectories);
-
+        
         var errObjs = new List<Object>();
 
+        Stopwatch sw = new Stopwatch();
+
+        sw.Start();
         foreach (var f in files)
         {
             var resFilePath = "Assets" + f.ReplaceFirst(Application.dataPath, "");
@@ -84,12 +91,21 @@ public class ShowDependencies : EditorWindow
             {
                 errObjs.Add(o);
             }
+
+            // 大于60秒 直接 退出
+            if (sw.ElapsedMilliseconds > 1000 * 20)
+                break;
         }
 
 //        foreach (var o in errObjs)
 //        {
 //            Debug.LogError(o);
 //        }
+
+        if (sw.ElapsedMilliseconds > 1000 * 20)
+            Debug.LogError("check time is aborted: " + sw.ElapsedMilliseconds);
+        else
+            Debug.Log("check time: " + sw.ElapsedMilliseconds);
 
         Selection.objects = errObjs.ToArray();
     }

@@ -650,6 +650,9 @@ namespace Mogo.Util
 
             Action action = () =>
             {
+                //Debug.Log(Path.Combine(SystemConfig.ResourceFolder, "Meta.xml"));
+                //Utils.LoadFile()
+                //Debug.LogWarning(FileAccessManager.LoadText(ResourceManager.MetaFileName));
                 var xml = XMLParser.LoadXML(FileAccessManager.LoadText(ResourceManager.MetaFileName));
                 if (xml == null)
                 {

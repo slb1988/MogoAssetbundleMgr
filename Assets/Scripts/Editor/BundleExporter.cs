@@ -43,7 +43,7 @@ public class BundleExporter
         BuildBundleWithRoot(files, rootPath, true);
     }
 
-    [MenuItem("Assets/Export Bundles")]
+    //[MenuItem("Assets/Export Bundles")]
     public static void ExportBundles()
     {
         ExportScenesManager.AutoSwitchTarget();
@@ -96,7 +96,7 @@ public class BundleExporter
 		}
 	}
 
-    [MenuItem("Assets/Export Bundles Ex")]
+    //[MenuItem("Assets/Export Bundles Ex")]
     public static void ExportBundlesEx()
     {
         ExportScenesManager.AutoSwitchTarget();
@@ -539,6 +539,10 @@ public class BundleExporter
     private static void SetXmlNodeMD5(XmlElement node, string rootPath, string relativePath, bool needSuffix = true)
     {
         string md5 = GetFileMD5(String.Concat(rootPath, "/", needSuffix ? ResourceManager.WithSuffix(relativePath) : relativePath));
+
+        Debug.LogWarning(string.Format("SetXmlNodeMD5 "
+            + String.Concat(rootPath, "/", needSuffix ? ResourceManager.WithSuffix(relativePath) : relativePath)
+            + " " + md5));
         node.SetAttribute("md5", md5);
     }
 
