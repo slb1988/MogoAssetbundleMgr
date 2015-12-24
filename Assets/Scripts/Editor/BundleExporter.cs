@@ -96,7 +96,7 @@ public class BundleExporter
 		}
 	}
 
-    //[MenuItem("Assets/Export Bundles Ex")]
+    [MenuItem("Assets/Export Bundles Ex")]
     public static void ExportBundlesEx()
     {
         ExportScenesManager.AutoSwitchTarget();

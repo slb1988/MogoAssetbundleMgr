@@ -18,8 +18,8 @@ public class MergeToolExWizard : EditorWindow
 
     private static Dictionary<string, ResourceMetaData> metaOfResource = new Dictionary<string, ResourceMetaData>();
 
-    string m_targetPath = "";
-    string m_sourcePath = "";
+    static string m_targetPath = "";
+    static string m_sourcePath = "";
 
     static Stopwatch sw = new Stopwatch();
 
@@ -27,8 +27,11 @@ public class MergeToolExWizard : EditorWindow
     public static void ShowWindow()
     {
         var wizard = EditorWindow.GetWindow(typeof(MergeToolExWizard)) as MergeToolExWizard;
-        wizard.m_targetPath = Application.dataPath + "/../MogoResources/";
+        //wizard.m_targetPath = Application.dataPath + "/../MogoResources/";
         wizard.minSize = new Vector2(400, 100);
+
+        m_targetPath = PlayerPrefs.GetString("Merge_TargetPath");
+        m_sourcePath = PlayerPrefs.GetString("Merge_SourcePath");
     }
     
     void OnGUI()
@@ -45,10 +48,17 @@ public class MergeToolExWizard : EditorWindow
         
         m_sourcePath = GUILayout.TextField(m_sourcePath);
         GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("选择目标", GUILayout.Width(120f)))
+        {
+            m_targetPath = EditorUtility.OpenFolderPanel("select target Folder", m_targetPath, "") + "/";
+            PlayerPrefs.SetString("Merge_TargetPath", m_targetPath);
+        }
         if (GUILayout.Button("选择来源", GUILayout.Width(120f)))
         {
             m_sourcePath = EditorUtility.OpenFolderPanel("select source Folder", m_sourcePath, "") + "/";
-             //    EditorUtility.OpenFilePanel("Select NotePad++.exe", "d:\\", "exe");
+            PlayerPrefs.SetString("Merge_SourcePath", m_sourcePath);
+            //    EditorUtility.OpenFilePanel("Select NotePad++.exe", "d:\\", "exe");
         }
         if (GUILayout.Button("合并", GUILayout.Width(120f)))
         {
@@ -61,6 +71,7 @@ public class MergeToolExWizard : EditorWindow
             UnityEngine.Debug.Log("elapsed time: " + sw.ElapsedMilliseconds);
 
         }
+        GUILayout.EndHorizontal();
     }
     public static void CopyFolder(string targetPath, string sourcePath, bool isMergeXML)
     {
