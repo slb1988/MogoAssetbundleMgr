@@ -8,6 +8,10 @@ using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using Mogo.Util;
+
+using Object = UnityEngine.Object;
+using Debug = UnityEngine.Debug;
+
 public class BundleExporter
 {
     public static readonly string bundlePath = "Assets/";
@@ -128,6 +132,66 @@ public class BundleExporter
         }
     }
 
+    [MenuItem("Tools/Handle Build-In Shaders(谨慎使用)")]
+    public static void HandleBuildInShaders()
+    {
+        var sb = new System.Text.StringBuilder();
+        var projectPath = new DirectoryInfo(Application.dataPath).Parent.FullName.Replace("\\", "/") + "/";
+        //首先找到所有的prefab
+        var root = Application.dataPath + "/Resources/";//"D:/mogo/client20131009/Assets/Resources/Scences/10004_City";//Application.dataPath;
+        var prefabFiles = Directory.GetFiles(root, "*.prefab", SearchOption.AllDirectories);
+        var selection = (from f in prefabFiles
+                         let file = f.ReplaceFirst(projectPath, "")
+                         let go = AssetDatabase.LoadAssetAtPath(file, typeof(Object))
+                         where go != null
+                         select go).ToArray();
+        //Object[] selection = Selection.GetFiltered(typeof(UnityEngine.Object), SelectionMode.DeepAssets);
+        Debug.Log("selection 总数" + selection.Count());
+        //用于打印的shader type
+        List<string> shaderTypesList = new List<string>();
+
+        foreach (var g in selection)
+        {
+            ChangeShaderInGo(g, ref shaderTypesList);
+        }
+        Debug.Log("shader type 总数：" + shaderTypesList.Count);
+        foreach (var item in shaderTypesList)
+        {
+            Debug.Log(item);
+        }
+    }
+
+    private static string ChangeShaderInGo(Object go, ref List<string> list)
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        var g = go as GameObject;
+        if (g == null)
+            return null;
+        Component[] components = g.GetComponents<Component>();
+        for (int i = 0; i < components.Length; i++)
+        {
+            var com = components[i];
+            if (com is MeshRenderer)
+            {
+                foreach (Material ml in (com as MeshRenderer).sharedMaterials)
+                {
+                    var shader = ml.shader;
+                    if (!list.Contains(shader.name))
+                        list.Add(shader.name);
+
+                    Shader newshader = Shader.Find(shader.name);
+                    if (newshader != null)
+                        ml.shader = newshader;
+                }
+            }
+        }
+        // Now recurse through each child GO (if there are any):
+        foreach (Transform childT in g.transform)
+        {
+            sb.AppendLine(ChangeShaderInGo(childT.gameObject, ref list));
+        }
+        return sb.ToString();
+    }
     public static void ExportDirectoryIfNeeded(string path)
     {
         if (!path.StartsWith(bundlePath))
