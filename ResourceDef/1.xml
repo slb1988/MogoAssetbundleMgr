@@ -6,6 +6,7 @@
     <isMerge>0</isMerge>
     <isPopInBuild>false</isPopInBuild>
     <extention>.prefab</extention>
+	
     <folders>
       <r>
         <path>Resources/Global</path>
